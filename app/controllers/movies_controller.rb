@@ -1,5 +1,6 @@
 class MoviesController < ApplicationController
 
+  
   def show
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
@@ -7,8 +8,22 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    
+    
+    @ratings_to_show = [] #Creating an empty array
+    @all_ratings = Movie.all_ratings
+    if params[:ratings]
+      @ratings_to_show = params[:ratings].keys
+    end
+    
+    if @ratings_to_show.nil? || @ratings_to_show.empty?
+      @movies = Movie.all
+    else 
+      @movies = Movie.with_ratings(@ratings_to_show)
+    end
+
   end
+
 
   def new
     # default: render 'new' template
