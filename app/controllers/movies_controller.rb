@@ -12,7 +12,23 @@ class MoviesController < ApplicationController
     
     @ratings_to_show = [] #Creating an empty array
     @all_ratings = Movie.all_ratings
-    if params[:ratings]
+
+    byebug
+    if params.key?(:home) || params.key?(:ratings) 
+      session[:sort] = params[:sort]
+      session[:ratings] = params[:ratings]
+    else
+      params[:sort] = session[:sort]
+      if params[:commit]!="Refresh" 
+        params[:ratings] = session[:ratings]
+      
+      else
+        session[:ratings] = params[:ratings]
+      end
+    end
+    
+    
+    if params.key?(:ratings) && params[:ratings].nil? == false
       @ratings_to_show = params[:ratings].keys
     end
     
@@ -21,7 +37,21 @@ class MoviesController < ApplicationController
     else 
       @movies = Movie.with_ratings(@ratings_to_show)
     end
-
+    
+    if params.key?(:sort)
+        @movies = @movies.order(params[:sort])
+        
+        if params[:sort] == "title"
+          @title_sort = "hilite"
+          @release_date_sort = ""
+        elsif params[:sort] == "release_date"
+          @title_sort = ""
+          @release_date_sort = "hilite"
+        end
+          
+      
+    end
+   
   end
 
 
