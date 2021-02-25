@@ -13,18 +13,16 @@ class MoviesController < ApplicationController
     @ratings_to_show = [] #Creating an empty array
     @all_ratings = Movie.all_ratings
 
-    byebug
-    if params.key?(:home) || params.key?(:ratings) 
+    
+    if params.key?(:home)
       session[:sort] = params[:sort]
+      params[:ratings] = session[:ratings]
+    elsif params.key?(:ratings) || ( params.key?(:commit) && params[:commit]=="Refresh")
       session[:ratings] = params[:ratings]
-    else
       params[:sort] = session[:sort]
-      if params[:commit]!="Refresh" 
-        params[:ratings] = session[:ratings]
-      
-      else
-        session[:ratings] = params[:ratings]
-      end
+    else
+      params[:ratings] = session[:ratings]
+      params[:sort] = session[:sort]
     end
     
     
